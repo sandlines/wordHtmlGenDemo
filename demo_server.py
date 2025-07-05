@@ -262,12 +262,20 @@ if __name__ == '__main__':
     # Get port from environment variable or default to 8000
     port = int(os.environ.get('FLASK_PORT', 8000))
     
+    # Check if running in standalone mode (no Next.js frontend)
+    standalone_mode = not os.path.exists('package.json')
+    
     print("🚀 Starting Template Editor Demo Server")
     print("=" * 50)
-    print(f"📍 Open your browser to: http://localhost:{port}")
-    print("📝 Edit templates in real-time")
-    print("👁️  See instant HTML preview")
-    print("📄 Generate PDF on demand")
+    if standalone_mode:
+        print(f"📍 Open your browser to: http://localhost:{port}")
+        print("📝 Edit templates in real-time")
+        print("👁️  See instant HTML preview")
+        print("📄 Generate PDF on demand")
+    else:
+        print(f"🔧 Backend API running on port {port}")
+        print("📄 PDF generation service ready")
+        print("🔗 Frontend will connect automatically")
     print("=" * 50)
     
     app.run(debug=True, host='0.0.0.0', port=port) 
