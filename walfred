@@ -1,0 +1,279 @@
+#!/bin/bash
+
+# Walfred - City Council Template Editor
+# Professional document generation for municipal governments
+
+echo "🏛️  Walfred - City Council Template Editor"
+echo "=============================================="
+
+# Check if we have a React app (package.json exists)
+if [ -f "package.json" ]; then
+    echo "🎯 React/Next.js application detected"
+    
+    # Check for Node.js
+    if command -v node &> /dev/null; then
+        echo "✅ Found Node.js: $(node --version)"
+    else
+        echo "❌ Node.js not found. Please install Node.js 18 or higher."
+        exit 1
+    fi
+    
+    # Check for npm
+    if command -v npm &> /dev/null; then
+        echo "✅ Found npm: $(npm --version)"
+    else
+        echo "❌ npm not found. Please install npm."
+        exit 1
+    fi
+    
+    # Install dependencies if node_modules doesn't exist
+    if [ ! -d "node_modules" ]; then
+        echo "📦 Installing Node.js dependencies..."
+        npm install
+        if [ $? -eq 0 ]; then
+            echo "✅ Node.js dependencies installed successfully"
+        else
+            echo "❌ Failed to install Node.js dependencies"
+            exit 1
+        fi
+    else
+        echo "✅ Node.js dependencies already installed"
+    fi
+    
+    # Start Python Flask server for PDF generation in background
+    echo "🚀 Starting Python backend server..."
+    
+    # Function to check if a Python package is installed
+    check_python_package() {
+        python3 -c "import $1" 2>/dev/null || python -c "import $1" 2>/dev/null
+    }
+    
+    # Function to get the correct pip command
+    get_pip_command() {
+        if command -v pip3 &> /dev/null; then
+            echo "pip3"
+        elif command -v pip &> /dev/null; then
+            echo "pip"
+        else
+            echo "none"
+        fi
+    }
+    
+    # Function to get the correct python command
+    get_python_command() {
+        if command -v python3 &> /dev/null; then
+            echo "python3"
+        elif command -v python &> /dev/null; then
+            echo "python"
+        else
+            echo "none"
+        fi
+    }
+    
+    # Check for Python
+    PYTHON_CMD=$(get_python_command)
+    if [ "$PYTHON_CMD" = "none" ]; then
+        echo "❌ Error: Python is not installed"
+        echo "   Please install Python from https://python.org"
+        exit 1
+    fi
+    
+    # Check for pip
+    PIP_CMD=$(get_pip_command)
+    if [ "$PIP_CMD" = "none" ]; then
+        echo "❌ Error: pip is not installed"
+        echo "   Please install pip package manager"
+        exit 1
+    fi
+    
+    # Check and install Python packages
+    PACKAGES_TO_CHECK=("flask" "flask_cors" "docxtpl" "docx" "reportlab")
+    MISSING_PACKAGES=()
+    
+    for package in "${PACKAGES_TO_CHECK[@]}"; do
+        if ! check_python_package "$package"; then
+            MISSING_PACKAGES+=("$package")
+        fi
+    done
+    
+    if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then
+        echo "📦 Installing missing Python packages..."
+        $PIP_CMD install -r requirements.txt
+        if [ $? -eq 0 ]; then
+            echo "✅ Python packages installed successfully"
+        else
+            echo "❌ Failed to install Python packages"
+            exit 1
+        fi
+    else
+        echo "✅ All Python packages are installed"
+    fi
+    
+    # Check for LibreOffice
+    if command -v soffice &> /dev/null; then
+        echo "✅ LibreOffice found: $(which soffice)"
+    else
+        echo "❌ LibreOffice not found. Please install LibreOffice:"
+        echo "   macOS: brew install libreoffice"
+        echo "   Linux: sudo apt-get install libreoffice"
+        echo "   Windows: Download from https://www.libreoffice.org"
+        exit 1
+    fi
+    
+    # Start Flask server in background
+    export FLASK_PORT=8000
+    $PYTHON_CMD demo_server.py &
+    FLASK_PID=$!
+    
+    echo "✅ Python backend started (PID: $FLASK_PID)"
+    
+    # Wait a moment for Flask to start
+    sleep 2
+    
+    echo "🚀 Starting Next.js frontend..."
+    echo "📍 Open your browser to: http://localhost:3000"
+    echo "📝 Professional city council interface"
+    echo "📄 Generate PDFs with section breaks"
+    echo "=============================================="
+    
+    # Function to cleanup background processes
+    cleanup() {
+        echo "🛑 Shutting down servers..."
+        kill $FLASK_PID 2>/dev/null
+        exit 0
+    }
+    
+    # Trap exit signals
+    trap cleanup EXIT INT TERM
+    
+    # Start Next.js dev server
+    npm run dev
+    
+else
+    echo "🐍 Python Flask application detected"
+    
+    # Function to check if a Python package is installed
+    check_python_package() {
+        python3 -c "import $1" 2>/dev/null || python -c "import $1" 2>/dev/null
+    }
+    
+    # Function to get the correct pip command
+    get_pip_command() {
+        if command -v pip3 &> /dev/null; then
+            echo "pip3"
+        elif command -v pip &> /dev/null; then
+            echo "pip"
+        else
+            echo "none"
+        fi
+    }
+    
+    # Function to get the correct python command
+    get_python_command() {
+        if command -v python3 &> /dev/null; then
+            echo "python3"
+        elif command -v python &> /dev/null; then
+            echo "python"
+        else
+            echo "none"
+        fi
+    }
+    
+    # Check for Python
+    PYTHON_CMD=$(get_python_command)
+    if [ "$PYTHON_CMD" = "none" ]; then
+        echo "❌ Error: Python is not installed"
+        echo "   Please install Python from https://python.org"
+        exit 1
+    fi
+    
+    echo "✅ Found Python: $PYTHON_CMD"
+    
+    # Check for pip
+    PIP_CMD=$(get_pip_command)
+    if [ "$PIP_CMD" = "none" ]; then
+        echo "❌ Error: pip is not installed"
+        echo "   Please install pip package manager"
+        exit 1
+    fi
+    
+    echo "✅ Found pip: $PIP_CMD"
+    
+    # Check if requirements.txt exists
+    if [ ! -f "requirements.txt" ]; then
+        echo "❌ Error: requirements.txt not found"
+        echo "   Please run walfred from the project directory"
+        exit 1
+    fi
+    
+    # Check and install Python packages
+    echo "🔍 Checking Python dependencies..."
+    
+    PACKAGES_TO_CHECK=("flask" "flask_cors" "docxtpl" "docx" "reportlab")
+    MISSING_PACKAGES=()
+    
+    for package in "${PACKAGES_TO_CHECK[@]}"; do
+        if ! check_python_package "$package"; then
+            MISSING_PACKAGES+=("$package")
+        fi
+    done
+    
+    if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then
+        echo "📦 Installing missing Python packages..."
+        echo "   Missing: ${MISSING_PACKAGES[*]}"
+        
+        # Install from requirements.txt
+        $PIP_CMD install -r requirements.txt
+        
+        if [ $? -eq 0 ]; then
+            echo "✅ Python packages installed successfully"
+        else
+            echo "❌ Failed to install Python packages"
+            echo "   Try running manually: $PIP_CMD install -r requirements.txt"
+            exit 1
+        fi
+    else
+        echo "✅ All Python packages are installed"
+    fi
+    
+    # Check for LibreOffice
+    echo "🔍 Checking LibreOffice..."
+    if command -v soffice &> /dev/null; then
+        echo "✅ LibreOffice found: $(which soffice)"
+    elif command -v libreoffice &> /dev/null; then
+        echo "✅ LibreOffice found: $(which libreoffice)"
+    else
+        echo "⚠️  LibreOffice not found - PDF generation may fail"
+        echo "   Install with: brew install libreoffice"
+        echo "   Or download from: https://libreoffice.org"
+        echo "   Continuing anyway..."
+    fi
+    
+    # Find an available port starting from 8000
+    echo "🔍 Finding available port..."
+    PORT=8000
+    while lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; do
+        echo "⚠️  Port $PORT is busy, trying $((PORT+1))..."
+        PORT=$((PORT+1))
+        
+        # Prevent infinite loop
+        if [ $PORT -gt 8010 ]; then
+            echo "❌ No available ports found between 8000-8010"
+            exit 1
+        fi
+    done
+    
+    echo "✅ Found available port: $PORT"
+    echo ""
+    echo "🚀 Starting Walfred Server"
+    echo "📍 Open your browser to: http://localhost:$PORT"
+    echo "📝 Edit templates in real-time with font customization"
+    echo "📄 Generate PDFs with section breaks"
+    echo "=============================================="
+    
+    # Export port for the Python server to use
+    export FLASK_PORT=$PORT
+    
+    # Start the Python server
+    $PYTHON_CMD demo_server.py
+fi

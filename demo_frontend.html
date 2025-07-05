@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Editor Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        
+        .editor-panel {
+            width: 40%;
+            background: white;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-panel {
+            width: 60%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            background: #007acc;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .editor-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: #218838;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .status-bar {
+            background: #f8f9fa;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .section-editor {
+            margin-top: 20px;
+        }
+        
+        .section-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+        }
+        
+        .agenda-section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title-row input[type="text"]:first-child {
+            width: 80px;
+            font-weight: bold;
+        }
+        
+        .section-title-row input[type="text"]:nth-child(2) {
+            flex: 1;
+            font-weight: bold;
+        }
+        
+        .agenda-items {
+            margin-left: 20px;
+        }
+        
+        .agenda-item-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .agenda-item-row input:first-child {
+            width: 50px;
+        }
+        
+        .agenda-item-row input:nth-child(2) {
+            width: 50px;
+        }
+        
+        .agenda-item-row input:nth-child(3) {
+            flex: 1;
+        }
+        
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .add-item-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .add-item-btn:hover {
+            background: #218838;
+        }
+        
+        .section-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .section-break-btn {
+            background: #17a2b8;
+        }
+        
+        .section-break-btn:hover {
+            background: #138496;
+        }
+        
+        .agenda-section-break {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .section-break-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .section-break-line {
+            flex: 1;
+            height: 2px;
+            background: #dee2e6;
+            border-radius: 1px;
+        }
+        
+        .section-break-text {
+            padding: 0 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-panel">
+        <div class="panel-header">
+            <span>📝 Template Editor</span>
+            <button class="btn" onclick="generatePDF()">📄 Generate PDF</button>
+        </div>
+        
+        <div class="editor-content">
+            <div class="form-group">
+                <label for="city_name">City Name</label>
+                                 <input type="text" id="city_name" value="City of Sausalito">
+            </div>
+            
+            <div class="form-group">
+                <label for="meeting_type">Meeting Type</label>
+                                 <input type="text" id="meeting_type" value="Special & Regular">
+             </div>
+             
+             <div class="form-group">
+                 <label for="meeting_date">Meeting Date</label>
+                 <input type="text" id="meeting_date" value="Tuesday, December 17, 2024">
+             </div>
+             
+             <div class="form-group">
+                 <label for="address">Address</label>
+                 <input type="text" id="address" value="420 Litho Street, Sausalito, CA 94965">
+             </div>
+             
+             <div class="form-group">
+                 <label for="department_name">Department Name</label>
+                 <input type="text" id="department_name" value="Administration Department">
+             </div>
+             
+                             <div class="form-group">
+                    <label for="department_phone">Department Phone</label>
+                    <input type="text" id="department_phone" value="(415) 289-4199">
+                </div>
+                
+                <div class="form-group">
+                    <label for="department_email">Department Email</label>
+                    <input type="text" id="department_email" value="clerk@sausalito.gov">
+                </div>
+                
+                <div class="form-group">
+                    <label for="special_time">Special Session Time</label>
+                    <input type="text" id="special_time" value="6:00 PM">
+                </div>
+                
+                <div class="form-group">
+                    <label for="regular_time">Regular Session Time</label>
+                    <input type="text" id="regular_time" value="7:00 PM">
+                </div>
+                
+                <div class="form-group">
+                    <label for="zoom_url">Zoom Meeting URL</label>
+                    <input type="text" id="zoom_url" value="https://us02web.zoom.us/j/123456789">
+                </div>
+                
+                <div class="form-group">
+                    <label for="zoom_passcode">Zoom Passcode</label>
+                    <input type="text" id="zoom_passcode" value="123456">
+                </div>
+                
+                <div class="form-group">
+                    <label for="zoom_phone">Zoom Phone Numbers</label>
+                    <input type="text" id="zoom_phone" value="+1 669 900 6833, +1 669 444 9171">
+                </div>
+                
+                <div class="section-editor">
+                    <div class="section-header">🎨 Font Customization</div>
+                    
+                    <div class="form-group">
+                        <label for="document_font">Document Font Family</label>
+                        <select id="document_font">
+                            <option value="Times New Roman">Times New Roman (Default)</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Calibri">Calibri</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Trebuchet MS">Trebuchet MS</option>
+                            <option value="Palatino">Palatino</option>
+                            <option value="Garamond">Garamond</option>
+                            <option value="Book Antiqua">Book Antiqua</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="heading_font">Heading Font Family</label>
+                        <select id="heading_font">
+                            <option value="Times New Roman">Times New Roman (Default)</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Calibri">Calibri</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Trebuchet MS">Trebuchet MS</option>
+                            <option value="Palatino">Palatino</option>
+                            <option value="Garamond">Garamond</option>
+                            <option value="Book Antiqua">Book Antiqua</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="font_size">Base Font Size (pt)</label>
+                        <select id="font_size">
+                            <option value="10">10pt</option>
+                            <option value="11">11pt</option>
+                            <option value="12" selected>12pt (Default)</option>
+                            <option value="13">13pt</option>
+                            <option value="14">14pt</option>
+                            <option value="16">16pt</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="heading_size">Heading Font Size (pt)</label>
+                        <select id="heading_size">
+                            <option value="14">14pt</option>
+                            <option value="16">16pt</option>
+                            <option value="18" selected>18pt (Default)</option>
+                            <option value="20">20pt</option>
+                            <option value="22">22pt</option>
+                            <option value="24">24pt</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="council_members">Council Members</label>
+                    <textarea id="council_members" rows="4" placeholder="Mayor: Name&#10;Vice Mayor: Name&#10;Council Member: Name">Mayor: Ian Sobieski
+Vice Mayor: Joan Cox
+Council Member: Melissa Blaustein
+Council Member: Susan Cleveland-Knowles
+Council Member: Jill Hoffman</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="staff_list">Staff List</label>
+                    <textarea id="staff_list" rows="4" placeholder="City Manager: Name&#10;City Attorney: Name&#10;City Clerk: Name">City Manager: Chris Zapata
+City Attorney: Sergio Rudin
+City Clerk: Kimberly Moeller
+Finance Director: Mary Wagner
+Public Works Director: Mark Therrien</textarea>
+                </div>
+                
+                <div class="section-editor">
+                    <div class="section-header">📋 Agenda Sections</div>
+                    <div id="agenda-sections">
+                        <!-- Dynamic agenda sections will be added here -->
+                    </div>
+                    <div class="section-buttons">
+                        <button class="btn add-item-btn" onclick="addAgendaSection()">+ Add Section</button>
+                        <button class="btn add-item-btn section-break-btn" onclick="addSectionBreak()">➖ Add Section Break</button>
+                    </div>
+                </div>
+            </div>
+        
+        <div class="status-bar">
+            <span id="status">Ready</span>
+        </div>
+    </div>
+    
+            <div class="preview-panel">
+            <div class="panel-header">
+                <span id="preview-title">📝 Template Editor</span>
+                <div>
+                    <button class="btn btn-secondary" id="toggle-view" onclick="toggleView()">📄 PDF Preview</button>
+                    <button class="btn" id="generate-pdf-btn" onclick="generatePDF()">🔄 Generate PDF</button>
+                </div>
+            </div>
+            
+            <div id="edit-view" class="preview-content">
+                <div style="padding: 20px; text-align: center; color: #666;">
+                    <h3>📝 Template Editing Mode</h3>
+                    <p>Edit your template in the left panel.</p>
+                    <p>Click "📄 PDF Preview" to see the generated document.</p>
+                    <br>
+                    <button class="btn" onclick="generateAndPreview()" style="font-size: 16px; padding: 15px 30px;">
+                        🚀 Generate & Preview PDF
+                    </button>
+                </div>
+            </div>
+            
+            <div id="pdf-view" class="preview-content" style="display: none; height: 100%;">
+                <iframe id="pdf-frame" class="preview-frame" src="about:blank"></iframe>
+            </div>
+        </div>
+    
+    <script>
+        let currentView = 'edit'; // 'edit' or 'pdf'
+        let currentPdfBlob = null;
+        let agendaSections = [];
+        
+        function getTemplateData() {
+            return {
+                city_name: document.getElementById('city_name').value,
+                meeting_type: document.getElementById('meeting_type').value,
+                meeting_date: document.getElementById('meeting_date').value,
+                address: document.getElementById('address').value,
+                department_name: document.getElementById('department_name').value,
+                department_phone: document.getElementById('department_phone').value,
+                department_email: document.getElementById('department_email').value,
+                special_time: document.getElementById('special_time').value,
+                regular_time: document.getElementById('regular_time').value,
+                zoom_url: document.getElementById('zoom_url').value,
+                zoom_passcode: document.getElementById('zoom_passcode').value,
+                zoom_phone: document.getElementById('zoom_phone').value,
+                council_members: document.getElementById('council_members').value,
+                staff_list: document.getElementById('staff_list').value,
+                agenda_sections: agendaSections,
+                font_settings: {
+                    document_font: document.getElementById('document_font').value,
+                    heading_font: document.getElementById('heading_font').value,
+                    font_size: parseInt(document.getElementById('font_size').value),
+                    heading_size: parseInt(document.getElementById('heading_size').value)
+                }
+            };
+        }
+        
+        function getTemplateHash() {
+            const data = getTemplateData();
+            return btoa(JSON.stringify(data)).replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+        }
+        
+        function addAgendaSection() {
+            const newSection = {
+                id: Date.now(),
+                type: 'section',
+                number: romanNumerals(agendaSections.length + 1),
+                title: 'NEW SECTION',
+                items: []
+            };
+            agendaSections.push(newSection);
+            renderAgendaSections();
+            saveTemplateToStorage();
+        }
+        
+        function addSectionBreak() {
+            const newBreak = {
+                id: Date.now(),
+                type: 'break',
+                title: 'Section Break'
+            };
+            agendaSections.push(newBreak);
+            renderAgendaSections();
+            saveTemplateToStorage();
+        }
+        
+        function removeAgendaSection(sectionId) {
+            agendaSections = agendaSections.filter(s => s.id !== sectionId);
+            renderAgendaSections();
+            saveTemplateToStorage();
+        }
+        
+        function addAgendaItem(sectionId) {
+            const section = agendaSections.find(s => s.id === sectionId);
+            if (section && section.type !== 'break') {
+                if (!section.items) section.items = [];
+                const newItem = {
+                    id: Date.now(),
+                    prefix: String.fromCharCode(65 + section.items.length), // A, B, C, etc.
+                    number: '.',
+                    title: 'New agenda item'
+                };
+                section.items.push(newItem);
+                renderAgendaSections();
+                saveTemplateToStorage();
+            }
+        }
+        
+        function removeAgendaItem(sectionId, itemId) {
+            const section = agendaSections.find(s => s.id === sectionId);
+            if (section && section.items) {
+                section.items = section.items.filter(i => i.id !== itemId);
+                renderAgendaSections();
+                saveTemplateToStorage();
+            }
+        }
+        
+        function renderAgendaSections() {
+            const container = document.getElementById('agenda-sections');
+            container.innerHTML = '';
+            
+            agendaSections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                
+                if (section.type === 'break') {
+                    // Render section break
+                    sectionDiv.className = 'agenda-section-break';
+                    sectionDiv.innerHTML = `
+                        <div class="section-break-content">
+                            <div class="section-break-line"></div>
+                            <div class="section-break-text">
+                                <input type="text" value="${section.title}" onchange="updateSectionTitle(${section.id}, this.value)" 
+                                       style="background: transparent; border: none; text-align: center; font-weight: bold; color: #6c757d;">
+                            </div>
+                            <div class="section-break-line"></div>
+                        </div>
+                        <button class="btn btn-small btn-danger" onclick="removeAgendaSection(${section.id})" style="margin-top: 10px;">Remove Break</button>
+                    `;
+                } else {
+                    // Render regular section
+                    sectionDiv.className = 'agenda-section';
+                    sectionDiv.innerHTML = `
+                        <div class="section-title-row">
+                            <input type="text" value="${section.number || ''}" onchange="updateSectionNumber(${section.id}, this.value)">
+                            <input type="text" value="${section.title}" onchange="updateSectionTitle(${section.id}, this.value)">
+                            <button class="btn btn-small btn-danger" onclick="removeAgendaSection(${section.id})">Remove</button>
+                        </div>
+                        <div class="agenda-items" id="section-${section.id}-items">
+                            ${(section.items || []).map(item => `
+                                <div class="agenda-item-row">
+                                    <input type="text" value="${item.prefix}" onchange="updateItemPrefix(${section.id}, ${item.id}, this.value)">
+                                    <input type="text" value="${item.number}" onchange="updateItemNumber(${section.id}, ${item.id}, this.value)">
+                                    <input type="text" value="${item.title}" onchange="updateItemTitle(${section.id}, ${item.id}, this.value)">
+                                    <button class="btn btn-small btn-danger" onclick="removeAgendaItem(${section.id}, ${item.id})">Remove</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="btn btn-small add-item-btn" onclick="addAgendaItem(${section.id})">+ Add Item</button>
+                    `;
+                }
+                container.appendChild(sectionDiv);
+            });
+        }
+        
+        function updateSectionNumber(sectionId, value) {
+            const section = agendaSections.find(s => s.id === sectionId);
+            if (section && section.type !== 'break') {
+                section.number = value;
+                saveTemplateToStorage();
+            }
+        }
+        
+        function updateSectionTitle(sectionId, value) {
+            const section = agendaSections.find(s => s.id === sectionId);
+            if (section) {
+                section.title = value;
+                saveTemplateToStorage();
+            }
+        }
+        
+        function updateItemPrefix(sectionId, itemId, value) {
+            const section = agendaSections.find(s => s.id === sectionId);
+            if (section) {
+                const item = section.items.find(i => i.id === itemId);
+                if (item) {
+                    item.prefix = value;
+                    saveTemplateToStorage();
+                }
+            }
+        }
+        
+        function updateItemNumber(sectionId, itemId, value) {
+            const section = agendaSections.find(s => s.id === sectionId);
+            if (section) {
+                const item = section.items.find(i => i.id === itemId);
+                if (item) {
+                    item.number = value;
+                    saveTemplateToStorage();
+                }
+            }
+        }
+        
+        function updateItemTitle(sectionId, itemId, value) {
+            const section = agendaSections.find(s => s.id === sectionId);
+            if (section) {
+                const item = section.items.find(i => i.id === itemId);
+                if (item) {
+                    item.title = value;
+                    saveTemplateToStorage();
+                }
+            }
+        }
+        
+        function romanNumerals(num) {
+            const values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+            const numerals = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+            let result = '';
+            for (let i = 0; i < values.length; i++) {
+                while (num >= values[i]) {
+                    result += numerals[i];
+                    num -= values[i];
+                }
+            }
+            return result;
+        }
+        
+        function initDefaultAgenda() {
+            agendaSections = [
+                {
+                    id: 1,
+                    type: 'section',
+                    number: 'I',
+                    title: 'CALL TO ORDER, ROLL CALL & ADJOURN TO CLOSED SESSION',
+                    items: []
+                },
+                {
+                    id: 2,
+                    type: 'section',
+                    number: 'II',
+                    title: 'RECONVENE TO OPEN SESSION',
+                    items: [
+                        {
+                            id: 1,
+                            prefix: 'A',
+                            number: '.',
+                            title: 'Report from Closed Session'
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    type: 'break',
+                    title: '────────────────────────────────────────'
+                },
+                {
+                    id: 4,
+                    type: 'section',
+                    number: 'III',
+                    title: 'PUBLIC COMMENT',
+                    items: [
+                        {
+                            id: 1,
+                            prefix: '',
+                            number: '',
+                            title: 'Public comment on items not on the agenda (limited to 3 minutes per speaker)'
+                        }
+                    ]
+                },
+                {
+                    id: 5,
+                    type: 'section',
+                    number: 'IV',
+                    title: 'CONSENT CALENDAR',
+                    items: [
+                        {
+                            id: 1,
+                            prefix: 'A',
+                            number: '.',
+                            title: 'Approval of Minutes from Previous Meeting'
+                        },
+                        {
+                            id: 2,
+                            prefix: 'B',
+                            number: '.',
+                            title: 'Monthly Financial Report'
+                        }
+                    ]
+                },
+                {
+                    id: 6,
+                    type: 'section',
+                    number: 'V',
+                    title: 'REGULAR AGENDA',
+                    items: [
+                        {
+                            id: 1,
+                            prefix: 'A',
+                            number: '.',
+                            title: 'Discussion of 2025 Budget Priorities'
+                        },
+                        {
+                            id: 2,
+                            prefix: 'B',
+                            number: '.',
+                            title: 'Public Works Project Updates'
+                        },
+                        {
+                            id: 3,
+                            prefix: 'C',
+                            number: '.',
+                            title: 'Parks & Recreation Master Plan Review'
+                        }
+                    ]
+                },
+                {
+                    id: 7,
+                    type: 'section',
+                    number: 'VI',
+                    title: 'ADJOURNMENT',
+                    items: []
+                }
+            ];
+        }
+        
+        function saveTemplateToStorage() {
+            const data = getTemplateData();
+            localStorage.setItem('template_data', JSON.stringify(data));
+            document.getElementById('status').textContent = 'Template auto-saved';
+        }
+        
+        function loadTemplateFromStorage() {
+            const saved = localStorage.getItem('template_data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                
+                Object.keys(data).forEach(key => {
+                    if (key === 'agenda_sections') {
+                        agendaSections = data[key] || [];
+                    } else if (key === 'font_settings') {
+                        // Handle font settings
+                        const fontSettings = data[key] || {};
+                        Object.keys(fontSettings).forEach(fontKey => {
+                            const element = document.getElementById(fontKey);
+                            if (element) {
+                                element.value = fontSettings[fontKey];
+                            }
+                        });
+                    } else {
+                        const element = document.getElementById(key);
+                        if (element) {
+                            element.value = data[key];
+                        }
+                    }
+                });
+                
+                renderAgendaSections();
+                document.getElementById('status').textContent = 'Template loaded from storage';
+            } else {
+                initDefaultAgenda();
+                renderAgendaSections();
+                document.getElementById('status').textContent = 'Default agenda loaded';
+            }
+        }
+        
+        function getCachedPDF() {
+            const hash = getTemplateHash();
+            const cached = localStorage.getItem(`pdf_cache_${hash}`);
+            return cached;
+        }
+        
+        function cachePDF(pdfDataUrl) {
+            const hash = getTemplateHash();
+            try {
+                localStorage.setItem(`pdf_cache_${hash}`, pdfDataUrl);
+                document.getElementById('status').textContent = 'PDF cached for fast access';
+            } catch (e) {
+                console.warn('PDF too large to cache:', e);
+                document.getElementById('status').textContent = 'PDF generated (too large to cache)';
+            }
+        }
+        
+        function toggleView() {
+            const editView = document.getElementById('edit-view');
+            const pdfView = document.getElementById('pdf-view');
+            const toggleBtn = document.getElementById('toggle-view');
+            const titleSpan = document.getElementById('preview-title');
+            
+            if (currentView === 'edit') {
+                // Switch to PDF view
+                const cachedPDF = getCachedPDF();
+                if (cachedPDF) {
+                    // Show cached PDF
+                    editView.style.display = 'none';
+                    pdfView.style.display = 'block';
+                    document.getElementById('pdf-frame').src = cachedPDF;
+                    toggleBtn.textContent = '📝 Edit Mode';
+                    titleSpan.textContent = '📄 PDF Preview';
+                    currentView = 'pdf';
+                    document.getElementById('status').textContent = 'Showing cached PDF';
+                } else {
+                    // Generate PDF first
+                    generateAndPreview();
+                }
+            } else {
+                // Switch to edit view
+                editView.style.display = 'block';
+                pdfView.style.display = 'none';
+                toggleBtn.textContent = '📄 PDF Preview';
+                titleSpan.textContent = '📝 Template Editor';
+                currentView = 'edit';
+                document.getElementById('status').textContent = 'Edit mode active';
+            }
+        }
+        
+        async function generatePDF() {
+            const data = getTemplateData();
+            const generateButton = document.getElementById('generate-pdf-btn');
+            
+            generateButton.disabled = true;
+            generateButton.textContent = '⏳ Generating...';
+            document.getElementById('status').textContent = 'Generating PDF...';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/generate-pdf', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    
+                    // Convert to data URL for caching and viewing
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        const dataUrl = reader.result;
+                        cachePDF(dataUrl);
+                        currentPdfBlob = blob;
+                    };
+                    reader.readAsDataURL(blob);
+                    
+                    // Download the PDF
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `agenda_${new Date().toISOString().slice(0, 10)}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    document.getElementById('status').textContent = 'PDF generated and downloaded';
+                } else {
+                    const error = await response.text();
+                    document.getElementById('status').textContent = `PDF generation failed: ${error}`;
+                }
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                document.getElementById('status').textContent = 'PDF generation error';
+            } finally {
+                generateButton.disabled = false;
+                generateButton.textContent = '🔄 Generate PDF';
+            }
+        }
+        
+        async function generateAndPreview() {
+            const data = getTemplateData();
+            const generateButton = document.querySelector('button[onclick="generateAndPreview()"]');
+            const toggleBtn = document.getElementById('toggle-view');
+            
+            if (generateButton) {
+                generateButton.disabled = true;
+                generateButton.textContent = '⏳ Generating...';
+            }
+            
+            document.getElementById('status').textContent = 'Generating PDF for preview...';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/generate-pdf', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    
+                    // Convert to data URL for viewing and caching
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        const dataUrl = reader.result;
+                        cachePDF(dataUrl);
+                        
+                        // Switch to PDF view
+                        document.getElementById('edit-view').style.display = 'none';
+                        document.getElementById('pdf-view').style.display = 'block';
+                        document.getElementById('pdf-frame').src = dataUrl;
+                        toggleBtn.textContent = '📝 Edit Mode';
+                        document.getElementById('preview-title').textContent = '📄 PDF Preview';
+                        currentView = 'pdf';
+                        
+                        document.getElementById('status').textContent = 'PDF generated and cached';
+                    };
+                    reader.readAsDataURL(blob);
+                    
+                    currentPdfBlob = blob;
+                } else {
+                    const error = await response.text();
+                    document.getElementById('status').textContent = `PDF generation failed: ${error}`;
+                }
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                document.getElementById('status').textContent = 'PDF generation error';
+            } finally {
+                if (generateButton) {
+                    generateButton.disabled = false;
+                    generateButton.textContent = '🚀 Generate & Preview PDF';
+                }
+            }
+        }
+        
+        // Auto-save template data when fields change
+        function onFieldChange() {
+            saveTemplateToStorage();
+            // Clear PDF cache when template changes
+            const hash = getTemplateHash();
+            localStorage.removeItem(`pdf_cache_${hash}`);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTemplateFromStorage();
+            document.getElementById('status').textContent = 'Ready - Edit your template';
+            
+            // Add change listeners to all form fields
+            const formFields = document.querySelectorAll('input, textarea, select');
+            formFields.forEach(field => {
+                field.addEventListener('input', onFieldChange);
+                field.addEventListener('change', onFieldChange); // For select elements
+            });
+        });
+    </script>
+</body>
+</html> 
