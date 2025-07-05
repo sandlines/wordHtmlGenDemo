@@ -1,8 +1,147 @@
-# City Council Agenda Editor
 
-A comprehensive city council agenda editor with real-time PDF generation and advanced editing capabilities. This tool allows city clerks and staff to create, edit, and preview professional meeting agendas with customizable fonts, margins, and layouts.
+**JUST RUN `./walfred`**
 
-## 🚀 Quick Start
+That's it. It does everything for you.
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+## 😤 Manual Instructions (For Those Who Don't Trust Magic)
+
+### Prerequisites (You Probably Already Have These)
+- Python 3.8+ 
+- Node.js 18+
+- LibreOffice (install with `brew install libreoffice` on macOS)
+
+### The Hard Way
+```bash
+# Clone the repo
+git clone https://github.com/sandlines/wordHtmlGenDemo.git
+cd wordHtmlGenDemo
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Install Node.js dependencies  
+npm install
+
+# Start the Flask backend
+python demo_server.py
+
+# In another terminal, start the Next.js frontend
+npm run dev
+```
+
+### 🤔 If Something Breaks
+
+**Port conflicts?** 
+- Walfred automatically finds available ports (8000-8010)
+- Or kill whatever's using port 8000: `lsof -ti:8000 | xargs kill`
+
+**LibreOffice missing?**
+- macOS: `brew install libreoffice`
+- Ubuntu: `sudo apt install libreoffice`
+- Windows: Download from https://libreoffice.org
+
+**Python dependencies missing?**
+- Run `pip install -r requirements.txt`
+- Try `pip3` if `pip` doesn't work
+
+**Node.js issues?**
+- Run `npm install`
+- Delete `node_modules` and `package-lock.json`, then `npm install` again
+
+### 🏛️ What This Thing Actually Does
+
+Professional city council agenda editor with:
+- ✨ Three view modes: Web, PDF, Side-by-Side
+- 🎨 Font and margin customization
+- ⚡ Real-time PDF generation and caching
+- 🖊️ Inline editing for everything
+- 📱 Professional municipal interface
+
+Built with Next.js + TypeScript + Flask + LibreOffice because we're fancy like that.
+
+---
+
+**Still confused?** Just run `./walfred` and follow the pretty colored output. 🌈
 
 ### Prerequisites
 - Python 3.8+ with pip
@@ -287,45 +426,3 @@ Content-Type: application/json
   "cache_key": "unique_cache_identifier"
 }
 ```
-
-## 🚀 Production Deployment
-
-### Vercel Deployment (Recommended)
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy
-vercel --prod
-```
-
-### Docker Deployment
-```bash
-# Build Docker image
-docker build -t agenda-editor .
-
-# Run container
-docker run -p 3000:3000 -p 8000:8000 agenda-editor
-```
-
-### Manual Deployment
-1. Set up production Python environment
-2. Install LibreOffice on server
-3. Configure reverse proxy (nginx/Apache)
-4. Set up process management (PM2, systemd)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🏢 About Sandlines
-
-This project is developed by Sandlines, creating innovative solutions for municipal government efficiency and transparency. 
