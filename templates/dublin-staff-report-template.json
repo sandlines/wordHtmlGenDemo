@@ -1,0 +1,544 @@
+{
+  "id": "dublin-staff-report-template",
+  "name": "Dublin Staff Report",
+  "description": "Official staff report template for Dublin City Council with professional municipal formatting",
+  "category": "staff-report",
+  "layout": "single-column",
+  "styling": {
+    "fonts": {
+      "primary": "Arial, sans-serif",
+      "secondary": "Arial, sans-serif",
+      "heading": "Arial, sans-serif"
+    },
+    "colors": {
+      "primary": "#0f766e",
+      "secondary": "#374151",
+      "accent": "#14b8a6",
+      "background": "#ffffff",
+      "text": "#111827",
+      "border": "#d1d5db"
+    },
+    "spacing": {
+      "section": "1.5rem",
+      "paragraph": "0.75rem",
+      "margin": "1rem",
+      "padding": "0.75rem"
+    },
+    "borders": {
+      "width": "1px",
+      "style": "solid",
+      "radius": "0.25rem"
+    },
+    "pageSize": "letter",
+    "orientation": "portrait",
+    "margins": {
+      "top": "1in",
+      "right": "1in",
+      "bottom": "1in",
+      "left": "1in"
+    }
+  },
+  "sections": [
+    {
+      "id": "header",
+      "type": "header",
+      "name": "Report Header",
+      "order": 0,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 1 },
+            "content": [
+              {
+                "type": "text",
+                "text": "CITY OF DUBLIN"
+              }
+            ]
+          },
+          {
+            "type": "heading",
+            "attrs": { "level": 2 },
+            "content": [
+              {
+                "type": "text",
+                "text": "STAFF REPORT"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "marks": [{"type": "bold"}],
+                "text": "TO:"
+              },
+              {
+                "type": "text",
+                "text": " {{recipient}}"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "marks": [{"type": "bold"}],
+                "text": "FROM:"
+              },
+              {
+                "type": "text",
+                "text": " {{author_name}}, {{author_title}}"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "marks": [{"type": "bold"}],
+                "text": "DATE:"
+              },
+              {
+                "type": "text",
+                "text": " {{report_date}}"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "marks": [{"type": "bold"}],
+                "text": "SUBJECT:"
+              },
+              {
+                "type": "text",
+                "text": " {{subject}}"
+              }
+            ]
+          }
+        ]
+      },
+      "variables": ["recipient", "author_name", "author_title", "report_date", "subject"]
+    },
+    {
+      "id": "executive-summary",
+      "type": "content",
+      "name": "Executive Summary",
+      "order": 1,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 3 },
+            "content": [
+              {
+                "type": "text",
+                "text": "EXECUTIVE SUMMARY"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Provide a brief overview of the key points, recommendations, and requested action items in this staff report."
+              }
+            ]
+          }
+        ]
+      },
+      "variables": []
+    },
+    {
+      "id": "recommendation",
+      "type": "content",
+      "name": "Staff Recommendation",
+      "order": 2,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 3 },
+            "content": [
+              {
+                "type": "text",
+                "text": "STAFF RECOMMENDATION"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Staff recommends that the City Council:"
+              }
+            ]
+          },
+          {
+            "type": "orderedList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "{{recommendation_1}}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "{{recommendation_2}}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "variables": ["recommendation_1", "recommendation_2"]
+    },
+    {
+      "id": "background",
+      "type": "content",
+      "name": "Background",
+      "order": 3,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 3 },
+            "content": [
+              {
+                "type": "text",
+                "text": "BACKGROUND"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Provide relevant background information, including:"
+              }
+            ]
+          },
+          {
+            "type": "bulletList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Previous Council actions"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Relevant policies or ordinances"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Current status of the issue"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "variables": []
+    },
+    {
+      "id": "analysis",
+      "type": "content",
+      "name": "Analysis",
+      "order": 4,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 3 },
+            "content": [
+              {
+                "type": "text",
+                "text": "ANALYSIS"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Provide detailed analysis of the issue, including:"
+              }
+            ]
+          },
+          {
+            "type": "heading",
+            "attrs": { "level": 4 },
+            "content": [
+              {
+                "type": "text",
+                "text": "Key Considerations"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "{{key_considerations}}"
+              }
+            ]
+          },
+          {
+            "type": "heading",
+            "attrs": { "level": 4 },
+            "content": [
+              {
+                "type": "text",
+                "text": "Options Analysis"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "{{options_analysis}}"
+              }
+            ]
+          }
+        ]
+      },
+      "variables": ["key_considerations", "options_analysis"]
+    },
+    {
+      "id": "fiscal-impact",
+      "type": "content",
+      "name": "Fiscal Impact",
+      "order": 5,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 3 },
+            "content": [
+              {
+                "type": "text",
+                "text": "FISCAL IMPACT"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Budget Impact: {{budget_impact}}"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Funding Source: {{funding_source}}"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "{{fiscal_details}}"
+              }
+            ]
+          }
+        ]
+      },
+      "variables": ["budget_impact", "funding_source", "fiscal_details"]
+    },
+    {
+      "id": "next-steps",
+      "type": "content",
+      "name": "Next Steps",
+      "order": 6,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 3 },
+            "content": [
+              {
+                "type": "text",
+                "text": "NEXT STEPS"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Following Council action, staff will:"
+              }
+            ]
+          },
+          {
+            "type": "orderedList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "{{next_step_1}}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "{{next_step_2}}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "variables": ["next_step_1", "next_step_2"]
+    },
+    {
+      "id": "attachments",
+      "type": "content",
+      "name": "Attachments",
+      "order": 7,
+      "visible": true,
+      "content": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": { "level": 3 },
+            "content": [
+              {
+                "type": "text",
+                "text": "ATTACHMENTS"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "{{attachments_list}}"
+              }
+            ]
+          }
+        ]
+      },
+      "variables": ["attachments_list"]
+    }
+  ],
+  "variables": {
+    "recipient": "Honorable Mayor and City Council",
+    "author_name": "Staff Member",
+    "author_title": "Department Director",
+    "report_date": "January 1, 2024",
+    "subject": "Subject of Staff Report",
+    "recommendation_1": "Approve the proposed action",
+    "recommendation_2": "Direct staff to implement the recommended changes",
+    "key_considerations": "Important factors to consider include regulatory compliance, community impact, and resource requirements.",
+    "options_analysis": "Staff evaluated three options: Option A (recommended), Option B (alternative), and Option C (no action).",
+    "budget_impact": "$0 - No fiscal impact",
+    "funding_source": "General Fund",
+    "fiscal_details": "This action does not require additional funding in the current fiscal year.",
+    "next_step_1": "Implement the approved action within 30 days",
+    "next_step_2": "Report back to Council with progress updates",
+    "attachments_list": "Attachment 1: Supporting Documentation\nAttachment 2: Financial Analysis"
+  },
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
+} 

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Plus, X, GripVertical, FileText } from 'lucide-react'
+import RichTextEditor from './RichTextEditor'
 
 interface AgendaItem {
   id: number
@@ -32,6 +33,16 @@ interface MeetingData {
   council_members: string
   staff_list: string
   agenda_sections: AgendaSection[]
+  font_settings: {
+    document_font: string
+    heading_font: string
+    font_size: number
+    heading_size: number
+    margin_top: number
+    margin_bottom: number
+    margin_left: number
+    margin_right: number
+  }
 }
 
 interface AgendaContentProps {
@@ -189,27 +200,19 @@ export default function AgendaContent({
                               </div>
                             </div>
                             
-                            {/* Description */}
-                            {isEditMode ? (
+                            {/* Description - Rich Text */}
                               <div className="mb-4">
-                                <label className="text-sm font-medium text-gray-700 block mb-1">
+                              <label className="text-sm font-medium text-gray-700 block mb-2">
                                   Description:
                                 </label>
-                                <textarea
-                                  value={item.description || ''}
-                                  onChange={(e) => updateAgendaItem(section.id, item.id, { description: e.target.value })}
-                                  className="w-full text-sm text-gray-600 bg-gray-50 border border-gray-300 rounded p-2 focus:border-violet-500 focus:outline-none"
-                                  rows={2}
+                              <RichTextEditor
+                                content={item.description || { type: 'doc', content: [] }}
+                                onChange={(content) => updateAgendaItem(section.id, item.id, { description: content })}
+                                editable={isEditMode}
                                   placeholder="Enter item description..."
+                                minimal={true}
                                 />
                               </div>
-                            ) : (
-                              item.description && (
-                                <p className="text-sm text-gray-600 mb-4">
-                                  {item.description}
-                                </p>
-                              )
-                            )}
                             
                             {/* Presenter */}
                             {isEditMode ? (

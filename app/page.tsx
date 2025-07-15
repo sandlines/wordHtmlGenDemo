@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import { Calendar, Clock, MapPin, Users, FileText, Download, Edit3, Eye, Plus, X, GripVertical, MoreHorizontal, Minus } from 'lucide-react'
 import AgendaContent from './components/AgendaContent'
+import SausalitoAgendaTemplate from './components/SausalitoAgendaTemplate'
+import DublinAgendaTemplate from './components/DublinAgendaTemplate'
+
 
 interface AgendaItem {
   id: number
@@ -47,9 +50,12 @@ interface MeetingData {
   font_settings: FontSettings
 }
 
+
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'agenda' | 'packet' | 'comments' | 'minutes'>('agenda')
-  const [viewMode, setViewMode] = useState<'web' | 'pdf' | 'side-by-side'>('web')
+  const [viewMode, setViewMode] = useState<'web' | 'pdf'>('web')
+  const [selectedTemplate, setSelectedTemplate] = useState<'sausalito-agenda' | 'dublin-agenda' | 'dublin-word'>('sausalito-agenda')
   const [meetingData, setMeetingData] = useState<MeetingData>({
     city_name: 'City of Sausalito',
     meeting_type: 'City Council Regular Meeting',
@@ -129,6 +135,76 @@ export default function Home() {
     }
   })
 
+  // Dublin meeting data with different styling
+  const [dublinMeetingData, setDublinMeetingData] = useState<MeetingData>({
+    city_name: 'City of Dublin',
+    meeting_type: 'Regular Meeting of the Dublin City Council',
+    meeting_date: 'Tuesday, May 6, 2025',
+    meeting_time: '7:00 PM',
+    location: 'Peter W. Synder Council Chamber',
+    address: '100 Civic Plaza, Dublin, CA 94568',
+    council_members: 'Dr. Sherry Hu, Mayor\nKashef Qaadri, Vice Mayor\nJean Josey, Councilmember\nMichael McCorriston, Councilmember\nJohn Morada, Councilmember',
+    staff_list: 'City Manager\nCity Attorney\nCity Clerk',
+    agenda_sections: [
+      {
+        id: 1,
+        type: 'section',
+        number: 'I',
+        title: 'Call to Order',
+        items: []
+      },
+      {
+        id: 2,
+        type: 'section',
+        number: 'II',
+        title: 'Roll Call',
+        items: []
+      },
+      {
+        id: 3,
+        type: 'section',
+        number: 'III',
+        title: 'Public Comment',
+        items: []
+      },
+      {
+        id: 4,
+        type: 'section',
+        number: 'IV',
+        title: 'Consent Calendar',
+        items: []
+      },
+      {
+        id: 5,
+        type: 'section',
+        number: 'V',
+        title: 'Regular Items',
+        items: [
+          {
+            id: 1,
+            prefix: '1',
+            number: '',
+            title: 'Budget Review and Discussion',
+            presenter: 'Finance Director',
+            description: 'Review of current budget and discussion of upcoming fiscal year.',
+            documents: ['Budget Report', 'Financial Summary'],
+            type: 'discussion'
+          }
+        ]
+      }
+    ],
+    font_settings: {
+      document_font: 'Arial',
+      heading_font: 'Arial',
+      font_size: 12,
+      heading_size: 16,
+      margin_top: 1,
+      margin_bottom: 1,
+      margin_left: 1,
+      margin_right: 1
+    }
+  })
+
   const [isEditMode, setIsEditMode] = useState(false)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
@@ -139,7 +215,7 @@ export default function Home() {
       window.URL.revokeObjectURL(pdfUrl)
       setPdfUrl(null)
     }
-  }, [meetingData])
+  }, [meetingData, dublinMeetingData, selectedTemplate])
 
   const addAgendaItem = (sectionId: number) => {
     const section = meetingData.agenda_sections.find(s => s.id === sectionId)
@@ -229,31 +305,90 @@ export default function Home() {
   const generatePDF = async (forView = false) => {
     setIsGeneratingPdf(true)
     try {
-      // Transform data to match the backend API format
-      const apiData = {
-        city_name: meetingData.city_name,
-        meeting_type: meetingData.meeting_type,
-        meeting_date: meetingData.meeting_date,
-        address: meetingData.address,
-        department_name: "Administration Department",
-        department_phone: "(415) 289-4199",
-        department_email: "clerk@sausalito.gov",
-        special_time: "6:00 PM",
-        regular_time: meetingData.meeting_time,
-        zoom_url: "https://us02web.zoom.us/j/123456789",
-        zoom_passcode: "123456",
-        zoom_phone: "+1 669 900 6833, +1 669 444 9171",
-        council_members: meetingData.council_members,
-        staff_list: meetingData.staff_list,
-        agenda_sections: meetingData.agenda_sections.map(section => ({
-          id: section.id,
-          type: section.type,
-          number: section.number,
-          title: section.title,
-          items: section.items || []
-        })),
-        font_settings: meetingData.font_settings
-      }
+      let apiData: any
+
+      if (selectedTemplate === 'sausalito-agenda') {
+        // Transform data to match the backend API format for agenda
+        apiData = {
+          template: 'sausalito-agenda',
+          city_name: meetingData.city_name,
+          meeting_type: meetingData.meeting_type,
+          meeting_date: meetingData.meeting_date,
+          address: meetingData.address,
+          department_name: "Administration Department",
+          department_phone: "(415) 289-4199",
+          department_email: "clerk@sausalito.gov",
+          special_time: "6:00 PM",
+          regular_time: meetingData.meeting_time,
+          zoom_url: "https://us02web.zoom.us/j/123456789",
+          zoom_passcode: "123456",
+          zoom_phone: "+1 669 900 6833, +1 669 444 9171",
+          council_members: meetingData.council_members,
+          staff_list: meetingData.staff_list,
+          agenda_sections: meetingData.agenda_sections.map(section => ({
+            id: section.id,
+            type: section.type,
+            number: section.number,
+            title: section.title,
+            items: section.items || []
+          })),
+          font_settings: meetingData.font_settings
+        }
+      } else if (selectedTemplate === 'dublin-agenda') {
+          // Transform data for Dublin agenda (HTML)
+          apiData = {
+            template: 'dublin-agenda',
+            city_name: dublinMeetingData.city_name,
+            meeting_type: dublinMeetingData.meeting_type,
+            meeting_date: dublinMeetingData.meeting_date,
+            address: dublinMeetingData.address,
+            department_name: "Administration Department",
+            department_phone: "(925) 833-6650",
+            department_email: "clerk@dublin.ca.gov",
+            special_time: "7:00 PM",
+            regular_time: dublinMeetingData.meeting_time,
+            zoom_url: "https://dublin.ca.gov/ccmeetings",
+            zoom_passcode: "",
+            zoom_phone: "",
+            council_members: dublinMeetingData.council_members,
+            staff_list: dublinMeetingData.staff_list,
+            agenda_sections: dublinMeetingData.agenda_sections.map(section => ({
+              id: section.id,
+              type: section.type,
+              number: section.number,
+              title: section.title,
+              items: section.items || []
+            })),
+            font_settings: dublinMeetingData.font_settings
+          }
+        } else {
+          // Transform data for Dublin agenda (Word)
+          apiData = {
+            template: 'dublin-word',
+            city_name: dublinMeetingData.city_name,
+            meeting_type: dublinMeetingData.meeting_type,
+            meeting_date: dublinMeetingData.meeting_date,
+            address: dublinMeetingData.address,
+            department_name: "Administration Department",
+            department_phone: "(925) 833-6650",
+            department_email: "clerk@dublin.ca.gov",
+            special_time: "7:00 PM",
+            regular_time: dublinMeetingData.meeting_time,
+            zoom_url: "https://dublin.ca.gov/ccmeetings",
+            zoom_passcode: "",
+            zoom_phone: "",
+            council_members: dublinMeetingData.council_members,
+            staff_list: dublinMeetingData.staff_list,
+            agenda_sections: dublinMeetingData.agenda_sections.map(section => ({
+              id: section.id,
+              type: section.type,
+              number: section.number,
+              title: section.title,
+              items: section.items || []
+            })),
+            font_settings: dublinMeetingData.font_settings
+          }
+        }
 
       const response = await fetch('/api/generate-pdf', {
         method: 'POST',
@@ -277,7 +412,12 @@ export default function Home() {
           // For download, create download link
           const a = document.createElement('a')
           a.href = url
-          a.download = `agenda_${meetingData.meeting_date.replace(/,?\s+/g, '_')}.pdf`
+          const filename = selectedTemplate === 'sausalito-agenda' 
+            ? `agenda_${meetingData.meeting_date.replace(/,?\s+/g, '_')}.pdf`
+            : selectedTemplate === 'dublin-agenda'
+            ? `dublin_agenda_${dublinMeetingData.meeting_date.replace(/,?\s+/g, '_')}.pdf`
+            : `dublin_word_agenda_${dublinMeetingData.meeting_date.replace(/,?\s+/g, '_')}.pdf`
+          a.download = filename
           document.body.appendChild(a)
           a.click()
           window.URL.revokeObjectURL(url)
@@ -294,9 +434,9 @@ export default function Home() {
     }
   }
 
-  const handleViewModeChange = (mode: 'web' | 'pdf' | 'side-by-side') => {
+  const handleViewModeChange = (mode: 'web' | 'pdf') => {
     setViewMode(mode)
-    if ((mode === 'pdf' || mode === 'side-by-side') && !pdfUrl) {
+    if (mode === 'pdf' && !pdfUrl) {
       generatePDF(true)
     }
   }
@@ -318,6 +458,45 @@ export default function Home() {
             </div>
             
             <div className="flex items-center space-x-4">
+              <select
+                value={selectedTemplate}
+                onChange={(e) => setSelectedTemplate(e.target.value as 'sausalito-agenda' | 'dublin-agenda' | 'dublin-word')}
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="sausalito-agenda">Sausalito Agenda</option>
+                <option value="dublin-agenda">Dublin Agenda (HTML)</option>
+                <option value="dublin-word">Dublin Agenda (Word)</option>
+              </select>
+              <a 
+                href="/tiptap-demo"
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Rich Text Demo
+              </a>
+              <a 
+                href="/formal-agenda-demo"
+                className="text-green-600 hover:text-green-800 font-medium"
+              >
+                Formal Agenda Demo
+              </a>
+              <a 
+                href="/dublin-tiptap-demo"
+                className="text-purple-600 hover:text-purple-800 font-medium"
+              >
+                Dublin TipTap Demo
+              </a>
+              <a 
+                href="/sausalito-word-demo"
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Sausalito Word Editor
+              </a>
+              <a 
+                href="/formal-agenda-demo?mode=advanced-design"
+                className="text-purple-600 hover:text-purple-800 font-medium"
+              >
+                Template Designer
+              </a>
               <button className="text-gray-400 hover:text-gray-600">
                 Review
               </button>
@@ -688,13 +867,6 @@ export default function Home() {
                 >
                   {isGeneratingPdf ? 'Generating...' : 'PDF View'}
                 </button>
-                <button
-                  onClick={() => handleViewModeChange('side-by-side')}
-                  className={`btn ${viewMode === 'side-by-side' ? 'btn-active' : 'btn-secondary'} ${isGeneratingPdf ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={isGeneratingPdf}
-                >
-                  Side by Side
-                </button>
               </div>
             </div>
 
@@ -722,62 +894,140 @@ export default function Home() {
 
             {/* Content Area */}
             {activeTab === 'agenda' && (
-              <div className={`${viewMode === 'side-by-side' ? 'flex h-screen' : ''}`}>
-                {viewMode === 'side-by-side' ? (
-                  <>
-                    {/* Left Side - Web View */}
-                    <div className="w-1/2 px-6 py-6 overflow-y-auto border-r border-gray-200">
-                      <AgendaContent
-                        meetingData={meetingData}
-                        isEditMode={isEditMode}
-                        updateAgendaItem={updateAgendaItem}
-                        updateSectionTitle={updateSectionTitle}
-                        removeAgendaItem={removeAgendaItem}
-                        addAgendaItem={addAgendaItem}
-                        addSection={addSection}
-                        addSectionBreak={addSectionBreak}
-                        setMeetingData={setMeetingData}
-                      />
-                    </div>
-                    
-                    {/* Right Side - PDF View */}
-                    <div className="w-1/2 bg-gray-50">
-                      {isGeneratingPdf ? (
-                        <div className="flex items-center justify-center h-full">
-                          <div className="text-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
-                            <p className="text-gray-600">Generating PDF...</p>
-                          </div>
-                        </div>
-                      ) : pdfUrl ? (
-                        <iframe
-                          src={pdfUrl}
-                          className="w-full h-full border-0"
-                          title="PDF Preview"
+              <div>
+                {viewMode === 'web' ? (
+                  <div className="px-6 py-6">
+                    {isEditMode ? (
+                      // Show editable AgendaContent in edit mode
+                      selectedTemplate === 'sausalito-agenda' ? (
+                        <AgendaContent
+                          meetingData={meetingData}
+                          isEditMode={isEditMode}
+                          updateAgendaItem={updateAgendaItem}
+                          updateSectionTitle={updateSectionTitle}
+                          removeAgendaItem={removeAgendaItem}
+                          addAgendaItem={addAgendaItem}
+                          addSection={addSection}
+                          addSectionBreak={addSectionBreak}
+                          setMeetingData={setMeetingData}
+                        />
+                      ) : (selectedTemplate === 'dublin-agenda' || selectedTemplate === 'dublin-word') ? (
+                        <AgendaContent
+                          meetingData={dublinMeetingData}
+                          isEditMode={isEditMode}
+                          updateAgendaItem={(sectionId, itemId, updates) => {
+                            const sections = dublinMeetingData.agenda_sections.map(section => {
+                              if (section.id === sectionId && section.type === 'section') {
+                                return {
+                                  ...section,
+                                  items: section.items?.map(item => 
+                                    item.id === itemId ? { ...item, ...updates } : item
+                                  ) || []
+                                }
+                              }
+                              return section
+                            })
+                            setDublinMeetingData(prev => ({ ...prev, agenda_sections: sections }))
+                          }}
+                          updateSectionTitle={(sectionId, title) => {
+                            const sections = dublinMeetingData.agenda_sections.map(section => 
+                              section.id === sectionId ? { ...section, title } : section
+                            )
+                            setDublinMeetingData(prev => ({ ...prev, agenda_sections: sections }))
+                          }}
+                          removeAgendaItem={(sectionId, itemId) => {
+                            const sections = dublinMeetingData.agenda_sections.map(section => {
+                              if (section.id === sectionId && section.type === 'section') {
+                                return {
+                                  ...section,
+                                  items: section.items?.filter(item => item.id !== itemId) || []
+                                }
+                              }
+                              return section
+                            })
+                            setDublinMeetingData(prev => ({ ...prev, agenda_sections: sections }))
+                          }}
+                          addAgendaItem={(sectionId) => {
+                            const section = dublinMeetingData.agenda_sections.find(s => s.id === sectionId)
+                            if (section && section.type === 'section') {
+                              const newItem = {
+                                id: Date.now(),
+                                prefix: String(section.items?.length ? section.items.length + 1 : 1),
+                                number: '',
+                                title: 'New Agenda Item',
+                                presenter: '',
+                                description: '',
+                                documents: [],
+                                type: 'discussion' as const
+                              }
+                              const sections = dublinMeetingData.agenda_sections.map(s => 
+                                s.id === sectionId ? { ...s, items: [...(s.items || []), newItem] } : s
+                              )
+                              setDublinMeetingData(prev => ({ ...prev, agenda_sections: sections }))
+                            }
+                          }}
+                          addSection={() => {
+                            const newSection = {
+                              id: Date.now(),
+                              type: 'section' as const,
+                              number: String(dublinMeetingData.agenda_sections.length + 1),
+                              title: 'New Section',
+                              items: []
+                            }
+                            setDublinMeetingData(prev => ({ 
+                              ...prev, 
+                              agenda_sections: [...prev.agenda_sections, newSection] 
+                            }))
+                          }}
+                          addSectionBreak={() => {
+                            const newBreak = {
+                              id: Date.now(),
+                              type: 'break' as const,
+                              title: '────────────────────────────────────────',
+                              items: []
+                            }
+                            setDublinMeetingData(prev => ({ 
+                              ...prev, 
+                              agenda_sections: [...prev.agenda_sections, newBreak] 
+                            }))
+                          }}
+                          setMeetingData={setDublinMeetingData}
+                        />
+                      ) : null
+                    ) : (
+                      // Show formatted templates in view mode
+                      selectedTemplate === 'sausalito-agenda' ? (
+                        <SausalitoAgendaTemplate
+                          meetingData={{
+                            date: String(meetingData.meeting_date || ''),
+                            agendaItems: meetingData.agenda_sections
+                              .filter(section => section.type === 'section' && section.items)
+                              .flatMap(section => 
+                                section.items?.filter(item => item && item.title).map(item => ({
+                                  title: String(item.title || ''),
+                                  description: item.description ? String(item.description) : '',
+                                  timeEstimate: undefined
+                                })) || []
+                              )
+                          }}
                         />
                       ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <div className="text-center">
-                            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-600">PDF will appear here</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : viewMode === 'web' ? (
-                  <div className="px-6 py-6">
-                    <AgendaContent
-                      meetingData={meetingData}
-                      isEditMode={isEditMode}
-                      updateAgendaItem={updateAgendaItem}
-                      updateSectionTitle={updateSectionTitle}
-                      removeAgendaItem={removeAgendaItem}
-                      addAgendaItem={addAgendaItem}
-                      addSection={addSection}
-                      addSectionBreak={addSectionBreak}
-                      setMeetingData={setMeetingData}
-                    />
+                        <DublinAgendaTemplate
+                          meetingData={{
+                            date: String(dublinMeetingData.meeting_date || ''),
+                            agendaItems: dublinMeetingData.agenda_sections
+                              .filter(section => section.type === 'section' && section.items)
+                              .flatMap(section => 
+                                section.items?.filter(item => item && item.title).map(item => ({
+                                  title: String(item.title || ''),
+                                  description: item.description ? String(item.description) : '',
+                                  timeEstimate: undefined
+                                })) || []
+                              )
+                          }}
+                        />
+                      )
+                    )}
                   </div>
                 ) : (
                   <div className="h-screen">

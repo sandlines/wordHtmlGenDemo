@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dublin City Council Agenda</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 0.75in;
+        }
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.3;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            display: table;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .header-left, .header-center, .header-right {
+            display: table-cell;
+            vertical-align: top;
+            width: 33.33%;
+        }
+        
+        .header-left {
+            text-align: left;
+        }
+        
+        .header-center {
+            text-align: center;
+        }
+        
+        .header-right {
+            text-align: right;
+        }
+        
+        .councilmembers-title {
+            color: #666;
+            font-size: 11pt;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .councilmember {
+            font-size: 10pt;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background-color: #2e8b57;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .shamrock {
+            color: white;
+            font-size: 36px;
+        }
+        
+        .city-name {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #2e8b57;
+            margin-bottom: 5px;
+        }
+        
+        .state-name {
+            font-size: 10pt;
+            color: #666;
+        }
+        
+        .location-info {
+            font-size: 10pt;
+            color: #666;
+            line-height: 1.2;
+        }
+        
+        .meeting-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .meeting-subtitle {
+            font-size: 14pt;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .meeting-main-title {
+            font-size: 28pt;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 25px;
+        }
+        
+        .meeting-details {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .meeting-date, .meeting-location {
+            display: table-cell;
+            vertical-align: top;
+            width: 50%;
+        }
+        
+        .meeting-date {
+            text-align: left;
+            font-weight: bold;
+            font-size: 12pt;
+        }
+        
+        .meeting-location {
+            text-align: right;
+            font-size: 12pt;
+        }
+        
+        .location-label {
+            font-weight: bold;
+        }
+        
+        .meeting-time {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        
+        .procedures-box {
+            border: 2px solid #000;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .procedures-title {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 15px;
+        }
+        
+        .procedures-content {
+            font-size: 10pt;
+            line-height: 1.4;
+            text-align: left;
+        }
+        
+        .procedures-content p {
+            margin-bottom: 12px;
+        }
+        
+        .procedures-list {
+            margin-left: 20px;
+        }
+        
+        .procedures-list li {
+            margin-bottom: 10px;
+        }
+        
+        .agenda-items {
+            margin-top: 20px;
+        }
+        
+        .agenda-item {
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .agenda-item:last-child {
+            border-bottom: none;
+        }
+        
+        .agenda-item-title {
+            font-weight: bold;
+            font-size: 12pt;
+            margin-bottom: 5px;
+        }
+        
+        .agenda-item-description {
+            font-size: 10pt;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .agenda-item-time {
+            font-size: 9pt;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="councilmembers-title">COUNCILMEMBERS</div>
+            <div class="councilmember">Dr. Sherry Hu, Mayor</div>
+            <div class="councilmember">Kashef Qaadri, Vice Mayor</div>
+            <div class="councilmember">Jean Josey, Councilmember</div>
+            <div class="councilmember">Michael McCorriston, Councilmember</div>
+            <div class="councilmember">John Morada, Councilmember</div>
+        </div>
+        
+        <div class="header-center">
+            <div class="logo">
+                <div class="shamrock">☘</div>
+            </div>
+            <div class="city-name">DUBLIN</div>
+            <div class="state-name">CALIFORNIA</div>
+        </div>
+        
+        <div class="header-right">
+            <div class="location-info">
+                <div>Peter W. Snyder Council Chamber</div>
+                <div>Dublin Civic Center</div>
+                <div>100 Civic Plaza</div>
+                <div>Dublin, CA 94568</div>
+                <div>www.dublin.ca.gov</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="meeting-title">
+        <div class="meeting-subtitle">Regular Meeting of the</div>
+        <div class="meeting-main-title">DUBLIN CITY COUNCIL</div>
+    </div>
+    
+    <div class="meeting-details">
+        <div class="meeting-date">{{ meeting_date }}</div>
+        <div class="meeting-location">
+            <span class="location-label">Location:</span> Peter W. Snyder<br>
+            <span style="margin-left: 4em;">Council Chamber</span><br>
+            <span style="margin-left: 4em;">100 Civic Plaza</span><br>
+            <span style="margin-left: 4em;">Dublin, CA 94568</span>
+        </div>
+    </div>
+    
+    <div class="meeting-time">REGULAR MEETING 7:00 PM</div>
+    
+    <div class="procedures-box">
+        <div class="procedures-title">Additional Meeting Procedures</div>
+        <div class="procedures-content">
+            <p>This City Council meeting will be broadcast live on Comcast T.V. channel 28 beginning at 7:00 p.m. This meeting will also be livestreamed at www.tv30.org and on the City's website at: https://dublin.ca.gov/ccmeetings</p>
+            
+            <p>For the convenience of the City and as a courtesy to the public, members of the public who wish to offer comments electronically have the option of giving public comment via Zoom, subject to the following procedures:</p>
+            
+            <div class="procedures-list">
+                <p>- Fill out an online speaker slip available at www.dublin.ca.gov. The speaker slip will be made available at 10:00 a.m. on Tuesday, May 6, 2025. Upon submission, you will receive Zoom link information from the City Clerk. Speakers slips will be accepted until the staff presentation ends, or until the public comment period on non-agenda items is closed.</p>
+                
+                <p>- Once connected to the Zoom platform using the Zoom link information from the City Clerk, the public speaker will be added to the Zoom webinar as an attendee and muted. The speaker will be able to observe the meeting from the Zoom platform.</p>
+                
+                <p>- When the agenda item upon which the individual would like to comment is addressed, the City Clerk will announce the speaker in the meeting when it is their time to give public comment. The speaker will then be unmuted to give public comment via Zoom.</p>
+                
+                <p>- Technical difficulties may occur that make the option unavailable, and, in such event, the meeting will continue despite the inability to provide the option.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="agenda-items">
+        {% for item in agenda_items %}
+        <div class="agenda-item">
+            <div class="agenda-item-title">{{ item.title }}</div>
+            {% if item.description %}
+            <div class="agenda-item-description">{{ item.description }}</div>
+            {% endif %}
+            {% if item.time_estimate %}
+            <div class="agenda-item-time">Est. Time: {{ item.time_estimate }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html> 
